@@ -1,5 +1,5 @@
 {
-  "name": "phonebook-app-api",
+  "name": "backend-phonebook-api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -12,9 +12,12 @@
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.18.2"
+    "dotenv": "^16.1.1",
+    "express": "^4.18.2",
+    "mongoose": "^7.2.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
-  }
+  },
+  "type": "module"
 }
