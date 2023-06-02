@@ -6,11 +6,18 @@ async function getPersons(_, res) {
   return res.status(200).json(persons);
 }
 
-async function getPerson(req, res) {
-  const id = req.params.id;
-  const person = await Person.findById(id);
+async function getPerson(req, res, next) {
+  try {
+    const id = req.params.id;
+    const person = await Person.findById(id);
 
-  return res.status(200).json(person);
+    if (person) return res.json(person);
+
+    return res.status(404).json({ error: "Person not found" });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
 }
 
 async function createPerson(req, res) {
