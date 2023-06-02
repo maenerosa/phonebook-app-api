@@ -50,10 +50,14 @@ async function updatePerson(req, res) {
 }
 
 async function deletePerson(req, res) {
-  const id = req.params.id;
+  try {
+    const id = req.params.id;
+    const person = await Person.findByIdAndDelete(id);
 
-  await Person.findByIdAndDelete(id);
-  res.status(204).end();
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
 }
 
 export default {
