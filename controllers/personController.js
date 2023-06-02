@@ -20,20 +20,31 @@ async function getPerson(req, res, next) {
   }
 }
 
-async function createPerson(req, res) {
-  const { name, number } = req.body;
+async function createPerson(req, res, next) {
+  try {
+    const { name, number } = req.body;
+    const personExists = await Person.findOne({ name });
 
-  const person = new Person({
-    name,
-    number,
-  });
+    if (personExists)
+      return res.status(404).json({ error: "Person already exists" });
 
-  const savedPerson = await person.save();
+    if (name === "" || number === "")
+      return res.status(404).json({ error: "Name and number are required" });
 
-  return res.status(201).json(savedPerson);
+    const person = new Person({
+      name,
+      number,
+    });
+
+    const savedPerson = await person.save();
+
+    return res.status(201).json(savedPerson);
+  } catch (error) {
+    next(error);
+  }
 }
 
-async function updatePerson(req, res) {
+async function updatePerson(req, res, next) {
   const id = req.params.id;
   const { name, number } = req.body;
 
@@ -42,14 +53,18 @@ async function updatePerson(req, res) {
     number,
   };
 
-  const updatedPerson = await Person.findByIdAndUpdate(id, person, {
-    new: true,
-  });
+  try {
+    const updatedPerson = await Person.findByIdAndUpdate(id, person, {
+      new: true,
+    });
 
-  res.json(updatedPerson);
+    return res.json(updatedPerson);
+  } catch (error) {
+    next(error);
+  }
 }
 
-async function deletePerson(req, res) {
+async function deletePerson(req, res, next) {
   try {
     const id = req.params.id;
     const person = await Person.findByIdAndDelete(id);
