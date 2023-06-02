@@ -2,7 +2,7 @@ import app from "./app.js";
 import config from "./utils/config.js";
 
 app.get("/", (_req, res) => {
-  res.send("Hello Mae");
+  res.send("This is a simple app for Phonebook");
 });
 
 app.listen(config.PORT, () => {
