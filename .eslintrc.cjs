@@ -8,7 +8,6 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-
   rules: {
     indent: ["error", 2],
     quotes: ["error", "double"],

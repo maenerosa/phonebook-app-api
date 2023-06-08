@@ -7,13 +7,12 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-
   name: String,
   passwordHash: String,
   persons: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Persons",
+      ref: "Person",
     },
   ],
 });

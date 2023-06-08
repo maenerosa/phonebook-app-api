@@ -2,41 +2,26 @@ import bcrypt from "bcrypt";
 import User from "../models/User.js";
 
 async function getUsers(_req, res) {
-  const users = await User.find({});
+  const users = await User.find({}).populate("persons");
 
   return res.status(200).json(users);
 }
 
-async function createUser(req, res, next) {
-  try {
-    const { username, name, password } = req.body;
-    const saltRounds = 10;
-    const passwordHash = await bcrypt.hash(password, saltRounds);
+async function createUser(req, res) {
+  const { username, name, password } = req.body;
 
-    if (username === undefined) {
-      return res.status(404).json({ error: "Username is missing" });
-    }
+  const saltRounds = 10;
+  const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    const userExists = await User.findOne({ username });
+  const user = new User({
+    username,
+    name,
+    passwordHash,
+  });
 
-    if (userExists)
-      return res.status(404).json({ error: "Username already exists" });
+  const savedUser = await user.save();
 
-    if (username === "")
-      return res.status(404).json({ error: "Username is required" });
-
-    const user = new User({
-      username,
-      name,
-      passwordHash,
-    });
-
-    const savedUser = await user.save();
-
-    return res.status(201).json(savedUser);
-  } catch (error) {
-    next(error);
-  }
+  return res.status(201).json(savedUser);
 }
 
 export default {
