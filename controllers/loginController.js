@@ -23,14 +23,17 @@ async function login(req, res, next) {
     };
 
     const token = jwt.sign(userForToken, config.SECRET, {
-      expiresIn: 17.5 * 17.5,
+      expiresIn: 60 * 60,
     });
 
-    res.status(200).send({ token, username: user.username, name: user.name });
+    return res
+      .status(200)
+      .send({ token, username: user.username, name: user.name });
   } catch (error) {
     next(error);
   }
 }
+
 export default {
   login,
 };

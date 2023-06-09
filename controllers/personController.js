@@ -24,28 +24,32 @@ async function getPerson(req, res, next) {
   }
 }
 
-async function createPerson(req, res) {
-  const { name, number } = req.body;
-  const decodedToken = jwt.verify(getTokenFrom(req), config.SECRET);
+async function createPerson(req, res, next) {
+  try {
+    const { name, number } = req.body;
+    const decodedToken = jwt.verify(getTokenFrom(req), config.SECRET);
 
-  if (!decodedToken.id) {
-    return res.status(401).json({ error: "Token missing or invalid" });
+    if (!decodedToken.id) {
+      return res.status(401).json({ error: "Token missing or invalid" });
+    }
+
+    const user = await User.findById(decodedToken.id);
+
+    const person = new Person({
+      name,
+      number,
+      user: user._id,
+    });
+
+    const savedPerson = await person.save();
+
+    user.persons = user.persons.concat(savedPerson._id);
+    await user.save();
+
+    return res.status(201).json(savedPerson);
+  } catch (error) {
+    next(error);
   }
-
-  const user = await User.findById(decodedToken.id);
-
-  const person = new Person({
-    name,
-    number,
-    user: user._id,
-  });
-
-  const savedPerson = await person.save();
-
-  user.persons = user.persons.concat(savedPerson._id);
-  await user.save();
-
-  return res.status(201).json(savedPerson);
 }
 
 async function updatePerson(req, res, next) {
